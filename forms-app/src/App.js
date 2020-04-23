@@ -25,16 +25,14 @@ const initialFormValues ={
   last_name: '',
   email: '',
   password: '',
-  TOS: false
+  TOS: false,
 }
 const initialFormErrors = {
   first_name: '',
   last_name: '',
   password: '',
-  email: '',
-  
-  TOS: ''
-
+  email: '',  
+  TOS: '',
 }
 
 const formSchema = yup.object().shape({
