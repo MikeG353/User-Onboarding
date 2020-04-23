@@ -6,7 +6,7 @@ function TeamMember({ details }) {
   }
   return (
     <div className='team-member container'>
-      <h2>{details.name}</h2>
+      <h2>{details.first_name} {details.last_name}</h2>
       <p>Email: {details.email}</p>
       <p>Role: {details.role}</p>
     </div>

@@ -14,11 +14,18 @@ function Form(props) {
     <form className='member container'>
       <h2>Member Form</h2>
       {/* ////////// TEXT INPUTS ////////// */}
-      <label>Name:&nbsp;
+      <label>First Name:&nbsp;
       <input
-          value={values.name}
+          value={values.first_name}
           onChange={onInputChange}
-          name='name'
+          name='first_name'
+          type='text'
+        /></label>
+        <label>Last Name:&nbsp;
+      <input
+          value={values.last_name}
+          onChange={onInputChange}
+          name='last_name'
           type='text'
         /></label>
       <label>Email:&nbsp;
@@ -35,24 +42,6 @@ function Form(props) {
             name='password'
             type='text' 
         /></label>
-
-      {/* ////////// DROPDOWN ////////// */}
-      <label>Role:&nbsp;
-      <select
-          
-          value={values.role}
-          onChange={onInputChange}
-          name='role'
-        >
-          <option defaultValue=''>Chose Your Role</option>
-          <option value='Tank'>Tank</option>
-          <option value='DPS'>DPS</option>
-          <option value='Control'>Control</option>
-          <option value='Healer'>Healer</option>
-
-        </select>
-        </label>
-
         <label><input
         
         checked={values.tos}

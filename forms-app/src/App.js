@@ -7,40 +7,44 @@ import Form from '../src/components/Form'
 import * as yup from 'yup'
 
 
-
+const url = 'https://reqres.in/api/users'
 // starting values for slices
-const initialTeamMembers = [
-  {
-    id: uuid(),
-    name: 'Griffin McElroy',
-    email: 'Ditto@TAZ.com',
-    password:'testpassword',
-    role: 'DM',
-    TOS: true
-  },
-]
+// const initialTeamMembers = [
+//   {
+//     id: uuid(),
+//     name: 'Griffin McElroy',
+//     email: 'Ditto@TAZ.com',
+//     password:'testpassword',
+//     role: 'DM',
+//     TOS: true
+//   },
+// ]
 
 const initialFormValues ={
-  name: '',
+  first_name: '',
+  last_name: '',
   email: '',
   password: '',
-  role: '',
   TOS: false
 }
 const initialFormErrors = {
-  name: '',
+  first_name: '',
+  last_name: '',
   password: '',
   email: '',
-  role: '',
+  
   TOS: ''
 
 }
 
 const formSchema = yup.object().shape({
-  name: yup
+  first_name: yup
     .string()
     .min(3, 'name must have at least 3 characters!')
-    .max(7, "Hero names are 7 letters or less!(It's tradition)")
+    .required('name is required!'),
+  last_name: yup
+    .string()
+    .min(3, 'name must have at least 3 characters!')
     .required('name is required!'),
   password: yup
     .string()
@@ -51,9 +55,6 @@ const formSchema = yup.object().shape({
     .string()
     .email('a VALID email is required')
     .required('email is required'),
-  role: yup
-    .string()
-    .required('role is required'),
   TOS: yup
     .boolean()
     .oneOf([true], "You must accept the Terms of Service to continue.")
@@ -61,15 +62,78 @@ const formSchema = yup.object().shape({
 
 function App() {
   // set slice
-  const [teamMembers, setTeamMembers] = useState(initialTeamMembers)
+  const [teamMembers, setTeamMembers] = useState([])
   const [formValues, setFormValues] = useState(initialFormValues)
   const [formDisabled, setFormDisabled] = useState(true)
   const [formErrors, setFormErrors] = useState(initialFormErrors)
-  
+  // GET and POST
+  const getTeam = () => {
+    axios.get(url)
+    .then(res => {
+      console.log(res.data)
+      setTeamMembers(res.data.data)
+    })
+    .catch(err => {
+      console.log(err)
+    })
+  }
+
+  useEffect (() => {
+    getTeam()
+  }, [])
+
+  const postMember = member => {
+    axios.post(url, member)
+      .then(res => {
+        setTeamMembers([...teamMembers, res.data])
+      })
+      .catch(err=> {
+        console.log(err)
+      })
+    }
+
+    useEffect(() => {
+    formSchema.isValid(formValues)
+    .then(valid => {
+      setFormDisabled(!valid);
+    })
+  }, [formValues])
+
+
+  // handler for submit button
+  const onSubmit = evt => {
+    evt.preventDefault()
+
+    const newMember = {
+      name: formValues.name,
+      email: formValues.email,
+      password: formValues.password,
+      TOS: formValues.TOS,
+    }
+
+    postMember(newMember)
+    setFormValues(initialFormValues)
+  }
   // handler for input changes 
   const onInputChange = evt => {
     const name = evt.target.name
     const value = evt.target.value
+
+    yup
+      .reach(formSchema, name)
+      .validate(value)
+      .then(valid => {
+        setFormErrors({
+          ...formErrors,
+          [name]: '',
+        })
+      })
+      .catch (err => {
+        setFormErrors({
+          ...formErrors,
+          [name]: err.errors[0]
+        })
+      })
 
     setFormValues({
       ...formValues,
@@ -86,40 +150,8 @@ function App() {
     })
   }
 
-  useEffect(() => {
-    formSchema.isValid(formValues)
-    .then(valid => {
-      setFormDisabled(!valid);
-    })
 
 
-  }, [formValues])
-  // handler for submit button
-  const onSubmit = evt => {
-    evt.preventDefault()
-    const newMember = {
-      id: uuid(),
-      name: formValues.name,
-      email: formValues.email,
-      password: formValues.password,
-      role: formValues.role,
-      TOS: formValues.TOS,
-    }
-
-    setTeamMembers([...teamMembers, newMember])
-    setFormValues(initialFormValues)
-  }
-  // axios use effect statement
-  
-    // axios.get('testurl')
-    // .then(res => {
-    //   setTeamMembers(res.data)
-    // })
-    // .catch (err => {
-    //   console.log(err)
-    // })
-  // useEffect(()=> {
-  // }, [])
   return (
     <div className='container'>
     <header><h1>Team Builder</h1></header>
