@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import {v4 as uuid} from 'uuid'
 import axios from 'axios'
 import './App.css'
 import TeamMember from './TeamMember'
@@ -83,6 +82,7 @@ function App() {
   const postMember = member => {
     axios.post(url, member)
       .then(res => {
+        console.log(res)
         setTeamMembers([...teamMembers, res.data])
       })
       .catch(err=> {
@@ -103,7 +103,8 @@ function App() {
     evt.preventDefault()
 
     const newMember = {
-      name: formValues.name,
+      first_name: formValues.first_name,
+      last_name: formValues.last_name,
       email: formValues.email,
       password: formValues.password,
       TOS: formValues.TOS,
